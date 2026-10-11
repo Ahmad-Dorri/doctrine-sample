@@ -15,11 +15,26 @@ class Word
     #[ORM\Column]
     private ?int $id = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     #[ORM\Column]
     private string $spelling;
 
+    public function getSpelling(): string
+    {
+        return $this->spelling;
+    }
+
     #[ORM\Column]
     private string $pronunciation;
+
+    public function getPronunciation(): string
+    {
+        return $this->pronunciation;
+    }
 
     public function __construct(string $spelling, string $pronunciation)
     {
