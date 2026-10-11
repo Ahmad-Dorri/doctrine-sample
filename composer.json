@@ -2,7 +2,7 @@
     "name": "bamooz/simplified",
     "autoload": {
         "psr-4": {
-            "Bamooz\\Simplified\\": "App/"
+            "Bamooz\\Simplified\\": "app/"
         }
     },
     "authors": [
@@ -12,6 +12,10 @@
         }
     ],
     "require": {
-      "php": "^8.4"
+      "php": "^8.4",
+        "doctrine/orm": "^3.7",
+        "doctrine/dbal": "^4.5",
+        "doctrine/migrations": "^3.9",
+        "symfony/cache": "^8.1"
     }
 }
