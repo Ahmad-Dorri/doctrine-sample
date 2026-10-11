@@ -1,0 +1,15 @@
+{
+    "name": "bamooz/simplified",
+    "autoload": {
+        "psr-4": {
+            "Bamooz\\Simplified\\": "App/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ahmad-Dorri",
+            "email": "ahmad.biamooz@gmail.com"
+        }
+    ],
+    "require": {}
+}
