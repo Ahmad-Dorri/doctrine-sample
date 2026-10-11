@@ -11,5 +11,7 @@
             "email": "ahmad.biamooz@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+      "php": "^8.4"
+    }
 }
