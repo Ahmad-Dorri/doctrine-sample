@@ -39,14 +39,25 @@ class Word
     }
 
     /** @var Collection<int, Translation> */
-    #[ORM\OneToMany(targetEntity: Translation::class, mappedBy: 'word')]
+    #[ORM\OneToMany(targetEntity: Translation::class, mappedBy: "word")]
+    #[ORM\OrderBy(["position" => "ASC"])]
     private Collection $translations;
 
     public function addTranslation(Translation $translation): Word
     {
-        $translation->setWord($this);
-        $this->translations->add($translation);
+        if (!$this->translations->contains($translation)) {
+            $translation->setWord($this);
+            $this->translations->add($translation);
+        }
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Translation>
+     */
+    public function getTranslations(): Collection
+    {
+        return $this->translations;
     }
 
     public function __construct(string $spelling, string $pronunciation)

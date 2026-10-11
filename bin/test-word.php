@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Bamooz\Simplified\Entity\Translation;
 use Bamooz\Simplified\Entity\Word;
 
 $em = require dirname(__DIR__) . '/config/doctrine.php';
@@ -14,7 +15,24 @@ $word = new Word(
     pronunciation: $expectedPronunciation,
 );
 
+$firstTranslation = new Translation(
+    word: $word,
+    text: 'Hi',
+    position: 1,
+);
+
+$secondTranslation = new Translation(
+    word: $word,
+    text: 'Greeting',
+    position: 2,
+);
+
+$word->addTranslation($firstTranslation);
+$word->addTranslation($secondTranslation);
+
 $em->persist($word);
+$em->persist($firstTranslation);
+$em->persist($secondTranslation);
 $em->flush();
 
 $id = $word->getId();
@@ -38,4 +56,19 @@ if (
     throw new RuntimeException('The saved word does not match the original values.');
 }
 
-echo "Word {$id} was saved and loaded successfully.\n";
+$savedTranslations = array_values($savedWord->getTranslations()->toArray());
+
+if (count($savedTranslations) !== 2) {
+    throw new RuntimeException('The word does not have two translations.');
+}
+
+if (
+    $savedTranslations[0]->getText() !== 'Hi'
+    || $savedTranslations[0]->getPosition() !== 1
+    || $savedTranslations[1]->getText() !== 'Greeting'
+    || $savedTranslations[1]->getPosition() !== 2
+) {
+    throw new RuntimeException('The translations were not loaded in position order.');
+}
+
+echo "Word {$id} and its two translations were saved and loaded successfully.\n";
