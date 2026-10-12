@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bamooz\Simplified\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Bamooz\Simplified\Entity\PartOfSpeeches\PartOfSpeech;
 
 #[ORM\Entity]
 #[ORM\Table(name: "translations")]
@@ -52,10 +53,20 @@ class Translation
         return $this->word;
     }
 
-    public function __construct(Word $word, string $text, int $position)
+    #[ORM\OneToOne(targetEntity: PartOfSpeech::class, mappedBy: 'translation', cascade: ['persist', 'remove'])]
+    private PartOfSpeech $partOfSpeech;
+
+    public function getPartOfSpeech(): PartOfSpeech
+    {
+        return $this->partOfSpeech;
+    }
+
+    public function __construct(Word $word, string $text, int $position, PartOfSpeech $partOfSpeech)
     {
         $this->word = $word;
         $this->text = $text;
         $this->position = $position;
+        $this->partOfSpeech = $partOfSpeech;
+        $this->partOfSpeech->setTranslation($this);
     }
 }
