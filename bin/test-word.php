@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 use Bamooz\Simplified\Entity\Translation;
 use Bamooz\Simplified\Entity\Word;
+use Bamooz\Simplified\Entity\PartOfSpeeches\Noun;
+use Bamooz\Simplified\Entity\PartOfSpeeches\Verb;
+use Bamooz\Simplified\Entity\PartOfSpeeches\Models\NounGender;
+use Bamooz\Simplified\Entity\PartOfSpeeches\Models\NounAnimacy;
+use Bamooz\Simplified\Entity\PartOfSpeeches\Models\VerbComposition;
 
 $em = require dirname(__DIR__) . '/config/doctrine.php';
 
-$expectedSpelling = 'Hello';
-$expectedPronunciation = 'h3llo';
+$expectedSpelling = 'book';
+$expectedPronunciation = 'bʊk';
 
 $word = new Word(
     spelling: $expectedSpelling,
@@ -17,14 +22,23 @@ $word = new Word(
 
 $firstTranslation = new Translation(
     word: $word,
-    text: 'Hi',
+    text: 'A written work',
     position: 1,
+    partOfSpeech: new Noun(
+        gender: NounGender::Neuter,
+        animacy: NounAnimacy::Inanimate,
+    ),
 );
 
 $secondTranslation = new Translation(
     word: $word,
-    text: 'Greeting',
+    text: 'To reserve',
     position: 2,
+    partOfSpeech: new Verb(
+        composition: VerbComposition::Simple,
+        pastForm: 'booked',
+        presentForm: 'book',
+    ),
 );
 
 $word->addTranslation($firstTranslation);
@@ -63,12 +77,32 @@ if (count($savedTranslations) !== 2) {
 }
 
 if (
-    $savedTranslations[0]->getText() !== 'Hi'
+    $savedTranslations[0]->getText() !== 'A written work'
     || $savedTranslations[0]->getPosition() !== 1
-    || $savedTranslations[1]->getText() !== 'Greeting'
+    || $savedTranslations[1]->getText() !== 'To reserve'
     || $savedTranslations[1]->getPosition() !== 2
 ) {
     throw new RuntimeException('The translations were not loaded in position order.');
 }
 
-echo "Word {$id} and its two translations were saved and loaded successfully.\n";
+$savedNoun = $savedTranslations[0]->getPartOfSpeech();
+$savedVerb = $savedTranslations[1]->getPartOfSpeech();
+
+if (
+    !$savedNoun instanceof Noun
+    || $savedNoun->getGender() !== NounGender::Neuter
+    || $savedNoun->getAnimacy() !== NounAnimacy::Inanimate
+) {
+    throw new RuntimeException('The noun subclass or its enum values were not restored correctly.');
+}
+
+if (
+    !$savedVerb instanceof Verb
+    || $savedVerb->getComposition() !== VerbComposition::Simple
+    || $savedVerb->getPastForm() !== 'booked'
+    || $savedVerb->getPresentForm() !== 'book'
+) {
+    throw new RuntimeException('The verb subclass or its properties were not restored correctly.');
+}
+
+echo "Word {$id}, its translations, and their noun and verb details were saved and loaded successfully.\n";
